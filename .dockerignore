@@ -1,0 +1,18 @@
+.drone.yml
+.gitignore
+.git
+.cache
+*.md
+
+# python
+__pycache__/
+*.pyc
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+

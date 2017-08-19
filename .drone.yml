@@ -1,0 +1,52 @@
+workspace:
+  base: /python
+  path: src/bitbucket.org/cryptomove_rest_api
+
+pipeline:
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount:
+      - /home/python_user/.pyenv
+    volumes:
+      - /tmp/cache:/cache
+
+  build:
+    image: timli0/python-pyenv-pipenv
+    environment:
+      - PY_USER=python_user
+      - PY_HOME=/home/python_user
+    commands:
+      - cp $PY_HOME/runtests.sh .
+      - chown -R $PY_USER:$PY_USER .
+      - su -c "./runtests.sh `pwd`" - $PY_USER
+      - su -c "cp -R /home/python_user/.pyenv ." - $PY_USER
+
+    volumes:
+      - /etc/drone/cache/api_runtests.sh:/home/python_user/runtests.sh
+
+  slack:
+    image: plugins/slack
+    channel: drone-ci
+    username: drone
+    webhook: https://hooks.slack.com/services/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
+    when:
+      status: [ success, failure ]
+    template: >
+      {{#success build.status}}
+        :whale: :whale: :whale: succeeded
+        build #{{build.number}}, branch {{build.branch}} by {{build.author}}
+        {{build.link}}
+      {{else}}
+        :glitch_crab: failed
+        build #{{build.number}}, branch {{build.branch}} by {{build.author}}
+        {{build.link}}
+      {{/success}}
+
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount:
+      - ./.pyenv
+    volumes:
+      - /tmp/cache:/cache

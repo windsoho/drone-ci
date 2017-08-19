@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[requires]
+python_version = "3.5.2"
+
+[dev-packages]
+pytest = "*"
+pytest-mock = "*"
+requests-mock = "==1.3.0"
+pluggy = ">0.3.1"
+
+[packages]
+python-dateutil = "*"
+setuptools = ">21.0.0"
+validate_email = ">=1.3"
+"ruamel.yaml" = ">=0.15.0"
